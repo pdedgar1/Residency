@@ -28,7 +28,6 @@ const SPRITE_SIZE = 12;
 // API endpoints 
 const API_BASE = window.location.origin + '/.netlify/functions';
 
-
 // Room layout (3x3 grid)
 const rooms = {
     '0,0': { name: 'Northwest Room', type: 'room', doors: { south: true, east: true } },
@@ -405,22 +404,9 @@ function startNewFloor() {
 }
 
 function initGame() {
-    // Check if returning user
-    const existingSession = localStorage.getItem('currentSession');
-    if (existingSession && document.getElementById('sessionInit').style.display !== 'none') {
-        const sessionData = JSON.parse(existingSession);
-        sessionEndTime = new Date(sessionData.endTime);
-        currentFloor = sessionData.floor;
-        
-        document.getElementById('sessionInit').style.display = 'none';
-        document.getElementById('gameContainer').style.display = 'flex';
-        startSessionTimer();
-    }
+    // Don't auto-assign sprite color anymore - wait for user selection
+    // spriteColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
     
-    // Assign random sprite color
-    spriteColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
-    document.getElementById('spriteColor').textContent = spriteColor;
-    document.getElementById('spriteColor').style.color = spriteColor;
     document.getElementById('floorNumber').textContent = currentFloor;
     
     createRooms();
@@ -1073,10 +1059,14 @@ function addDemoText() {
 
 // Initialize the game when page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Show user setup modal initially
+    document.getElementById('userSetup').style.display = 'flex';
+    document.getElementById('gameContainer').style.display = 'none';
+    
     // Set up username input listener
     document.getElementById('usernameInput').addEventListener('input', updateEnterButton);
     document.getElementById('usernameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !document.getElementById('enterRoomsBtn').disabled) {
             enterRooms();
         }
     });
