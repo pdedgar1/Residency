@@ -7,7 +7,19 @@ let isWalking = false;
 let sessionActive = true;
 let sessionEndTime = null;
 let currentFloor = 1;
-let visitorCount = 1;
+
+// User management
+let currentUser = {
+    id: null,
+    username: '',
+    color: ''
+};
+let otherUsers = [];
+let selectedColor = null;
+
+// Presence management
+let presenceInterval = null;
+let roomUpdateInterval = null;
 
 // Movement speed and grid
 const MOVE_SPEED = 4;
@@ -45,7 +57,192 @@ const pastelColors = [
     '#FFC3A0', '#D4A5A5', '#A0E7E5', '#B4F8C8', '#F0E68C'
 ];
 
-// Session Management
+// User setup functions
+async function loadAvailableColors() {
+    try {
+        const response = await fetch(`${API_BASE}/get-available-colors`);
+        const data = await response.json();
+        
+        const colorGrid = document.getElementById('colorGrid');
+        const colorStatus = document.getElementById('colorStatus');
+        
+        colorGrid.innerHTML = '';
+        
+        data.availableColors.forEach(color => {
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'color-option';
+            colorDiv.style.backgroundColor = color;
+            colorDiv.onclick = () => selectColor(color);
+            
+            if (data.usedColors.includes(color)) {
+                colorDiv.classList.add('used');
+                colorDiv.onclick = null;
+            }
+            
+            colorGrid.appendChild(colorDiv);
+        });
+        
+        const availableCount = data.availableColors.length - data.usedColors.length;
+        colorStatus.textContent = `${availableCount} colors available • ${data.totalOnline} users online`;
+        
+    } catch (error) {
+        console.error('Error loading colors:', error);
+        document.getElementById('colorStatus').textContent = 'Error loading colors';
+    }
+}
+
+function selectColor(color) {
+    // Remove previous selection
+    document.querySelectorAll('.color-option.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Add selection to clicked color
+    event.target.classList.add('selected');
+    selectedColor = color;
+    
+    updateEnterButton();
+}
+
+function updateEnterButton() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const btn = document.getElementById('enterRoomsBtn');
+    
+    if (username.length >= 2 && selectedColor) {
+        btn.disabled = false;
+    } else {
+        btn.disabled = true;
+    }
+}
+
+async function enterRooms() {
+    const username = document.getElementById('usernameInput').value.trim();
+    
+    if (!username || !selectedColor) {
+        alert('Please enter a username and select a color');
+        return;
+    }
+    
+    // Set up user
+    currentUser.id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    currentUser.username = username;
+    currentUser.color = selectedColor;
+    spriteColor = selectedColor;
+    
+    // Update UI
+    document.getElementById('currentUsername').textContent = username;
+    document.getElementById('spriteColor').textContent = selectedColor;
+    document.getElementById('spriteColor').style.color = selectedColor;
+    
+    // Hide setup modal and show game
+    document.getElementById('userSetup').style.display = 'none';
+    document.getElementById('gameContainer').style.display = 'flex';
+    
+    // Initialize game
+    initGame();
+    
+    // Start presence system
+    startPresenceSystem();
+}
+
+// Presence system
+function startPresenceSystem() {
+    // Send initial presence
+    updatePresence();
+    
+    // Send heartbeat every 30 seconds
+    presenceInterval = setInterval(updatePresence, 30000);
+    
+    // Update room data every 10 seconds
+    roomUpdateInterval = setInterval(updateRoomData, 10000);
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        leavePresence();
+    });
+}
+
+async function updatePresence() {
+    try {
+        const response = await fetch(`${API_BASE}/user-presence`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'heartbeat',
+                userId: currentUser.id,
+                username: currentUser.username,
+                color: currentUser.color,
+                roomId: `${currentRoom.x}-${currentRoom.y}`,
+                position: spritePosition
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            updateOtherUsers(data.users);
+            updateUserCounts(data.roomCount, data.totalOnline);
+        }
+    } catch (error) {
+        console.error('Error updating presence:', error);
+    }
+}
+
+async function leavePresence() {
+    try {
+        await fetch(`${API_BASE}/user-presence`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'leave',
+                userId: currentUser.id
+            })
+        });
+    } catch (error) {
+        console.error('Error leaving presence:', error);
+    }
+}
+
+function updateOtherUsers(users) {
+    // Filter out current user
+    otherUsers = users.filter(user => user.userId !== currentUser.id);
+    displayOtherUsers();
+}
+
+function displayOtherUsers() {
+    const currentCoords = `${currentRoom.x},${currentRoom.y}`;
+    const currentRoomElement = document.getElementById(`room-${currentCoords}`);
+    
+    // Remove existing other user sprites
+    currentRoomElement.querySelectorAll('.other-sprite').forEach(el => el.remove());
+    
+    // Add sprites for other users in this room
+    const currentRoomId = `${currentRoom.x}-${currentRoom.y}`;
+    const roomUsers = otherUsers.filter(user => user.roomId === currentRoomId);
+    
+    roomUsers.forEach(user => {
+        const sprite = document.createElement('div');
+        sprite.className = 'other-sprite';
+        sprite.style.backgroundColor = user.color;
+        sprite.style.left = `${user.position.x}px`;
+        sprite.style.top = `${user.position.y}px`;
+        sprite.setAttribute('data-username', user.username);
+        currentRoomElement.appendChild(sprite);
+    });
+}
+
+function updateUserCounts(roomCount, totalOnline) {
+    document.getElementById('roomUserCount').textContent = roomCount - 1; // Exclude self
+    document.getElementById('totalOnlineCount').textContent = totalOnline;
+}
+
+async function updateRoomData() {
+    try {
+        await loadCurrentRoomData();
+        await updatePresence(); // Also update presence
+    } catch (error) {
+        console.error('Error updating room data:', error);
+    }
+}
 function initSession(days) {
     const endTime = new Date();
     endTime.setDate(endTime.getDate() + days);
@@ -810,28 +1007,19 @@ function addDemoText() {
 
 // Initialize the game when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if there's an active session
-    const existingSession = localStorage.getItem('currentSession');
-    if (existingSession) {
-        const sessionData = JSON.parse(existingSession);
-        const endTime = new Date(sessionData.endTime);
-        
-        if (endTime > new Date()) {
-            // Session still active
-            sessionEndTime = endTime;
-            currentFloor = sessionData.floor;
-            document.getElementById('sessionInit').style.display = 'none';
-            document.getElementById('gameContainer').style.display = 'flex';
-            initGame();
-            return;
-        } else {
-            // Session expired, clean up
-            localStorage.removeItem('currentSession');
+    // Set up username input listener
+    document.getElementById('usernameInput').addEventListener('input', updateEnterButton);
+    document.getElementById('usernameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            enterRooms();
         }
-    }
+    });
     
-    // Show session initialization for new session
-    addDemoText(); // Add some demo content
+    // Load available colors
+    loadAvailableColors();
+    
+    // Add some demo content for testing
+    addDemoText();
 });
 
 // Handle page visibility for session management

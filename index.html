@@ -7,19 +7,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="session-init" id="sessionInit">
-        <div class="init-modal">
-            <h2>Welcome to the Text Rooms</h2>
-            <p>You are the first visitor to this session. Please set how long this floor should remain active:</p>
-            <div class="duration-options">
-                <button onclick="initSession(1)">1 Day</button>
-                <button onclick="initSession(3)">3 Days</button>
-                <button onclick="initSession(7)">1 Week</button>
-                <button onclick="initSession(30)">1 Month</button>
-            </div>
-            <div class="custom-duration">
-                <input type="number" id="customDays" min="1" max="365" placeholder="Custom days">
-                <button onclick="initCustomSession()">Set Custom</button>
+    <div class="user-setup" id="userSetup">
+        <div class="setup-modal">
+            <h2>Enter the Text Rooms</h2>
+            <div class="setup-form">
+                <div class="username-section">
+                    <label for="usernameInput">Choose a username:</label>
+                    <input type="text" id="usernameInput" maxlength="20" placeholder="Your name here...">
+                </div>
+                
+                <div class="color-section">
+                    <label>Choose your sprite color:</label>
+                    <div class="color-grid" id="colorGrid">
+                        <!-- Colors will be populated here -->
+                    </div>
+                    <div class="color-status" id="colorStatus">Loading available colors...</div>
+                </div>
+                
+                <div class="setup-controls">
+                    <button id="enterRoomsBtn" onclick="enterRooms()" disabled>Enter Rooms</button>
+                </div>
             </div>
         </div>
     </div>
@@ -51,12 +58,14 @@
 
             <div class="info">
                 <strong>Collaborative Text Rooms</strong><br>
-                You are the <span id="spriteColor">colored</span> sprite.<br><br>
+                You are <span id="currentUsername">loading...</span><br>
+                <span id="spriteColor">colored</span> sprite.<br><br>
                 <strong>Controls:</strong><br>
                 Arrow Keys or WASD to walk<br>
                 Enter to place text<br><br>
                 Current Room: <span id="currentRoomName">Foyer</span><br>
-                Visitors in session: <span id="visitorCount">1</span>
+                Others in room: <span id="roomUserCount">0</span><br>
+                Total online: <span id="totalOnlineCount">1</span>
             </div>
 
             <div class="instructions">
