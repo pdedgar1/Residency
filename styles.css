@@ -5,14 +5,12 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 20px;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     font-family: 'Courier New', monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 /* Session Initialization */
@@ -97,8 +95,10 @@ body {
     display: flex;
     gap: 20px;
     max-width: 1400px;
-    height: 90vh;
-    width: 90vw;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 40px);
+    align-items: flex-start;
 }
 
 /* Main View */
@@ -259,11 +259,12 @@ body {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .minimap {
-    width: 300px;
-    height: 300px;
+    width: 270px;
+    height: 270px;
     border: 2px solid #34495e;
     background: #ecf0f1;
     position: relative;
@@ -276,6 +277,7 @@ body {
     border: 1px solid #bdc3c7;
     background: #f8f9fa;
     transition: all 0.3s ease;
+    font-size: 10px;
 }
 
 .minimap-room.current {
@@ -283,6 +285,7 @@ body {
     border-color: #e67e22;
     transform: scale(1.1);
     z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .minimap-room.foyer { background: #9b59b6; }
@@ -499,25 +502,30 @@ body {
     .game-container {
         flex-direction: column;
         align-items: center;
-        height: auto;
-        padding: 20px;
+        padding: 10px;
     }
     
     .main-view {
-        width: 600px;
-        height: 600px;
+        width: 90vw;
+        height: 90vw;
+        max-width: 600px;
+        max-height: 600px;
+        margin-bottom: 20px;
     }
     
     .sidebar {
-        width: 600px;
+        width: 90vw;
+        max-width: 600px;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
+        gap: 15px;
     }
     
     .minimap-container {
         flex: 1;
-        min-width: 300px;
+        min-width: 280px;
+        margin-bottom: 0;
     }
     
     .input-area {
@@ -531,20 +539,32 @@ body {
 }
 
 @media (max-width: 700px) {
+    body {
+        padding: 10px;
+    }
+    
+    .game-container {
+        padding: 5px;
+    }
+    
     .main-view {
-        width: 90vw;
-        height: 90vw;
+        width: 95vw;
+        height: 95vw;
         max-width: 500px;
         max-height: 500px;
     }
     
     .sidebar {
-        width: 90vw;
+        width: 95vw;
         flex-direction: column;
     }
     
     .minimap {
         width: 200px;
         height: 200px;
+    }
+    
+    .minimap-room {
+        font-size: 8px;
     }
 }
