@@ -1,0 +1,49 @@
+{
+    "roomId": "1-1",
+    "roomName": "Courtyard",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [
+      {
+        "id": "demo_entry_courtyard_1",
+        "text": "Welcome to the central gathering space",
+        "position": {
+          "x": 200,
+          "y": 180
+        },
+        "author": {
+          "id": "demo_visitor_3",
+          "color": "#FFB3BA",
+          "timestamp": "2025-01-20T10:00:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash_3",
+          "userAgent": "demo"
+        }
+      },
+      {
+        "id": "demo_entry_courtyard_2",
+        "text": "Messages connect us across time",
+        "position": {
+          "x": 400,
+          "y": 250
+        },
+        "author": {
+          "id": "demo_visitor_4",
+          "color": "#BAE1FF",
+          "timestamp": "2025-01-20T14:20:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash_4",
+          "userAgent": "demo"
+        }
+      }
+    ],
+    "statistics": {
+      "totalVisitors": 2,
+      "totalMessages": 2,
+      "lastActivity": "2025-01-20T14:20:00Z"
+    }
+  }

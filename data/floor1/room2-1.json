@@ -1,0 +1,32 @@
+{
+    "roomId": "2-1",
+    "roomName": "East Wing",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [
+      {
+        "id": "demo_entry_east_1",
+        "text": "Light streams through the eastern windows",
+        "position": {
+          "x": 350,
+          "y": 200
+        },
+        "author": {
+          "id": "demo_visitor_5",
+          "color": "#E6B3FF",
+          "timestamp": "2025-01-20T13:45:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash_5",
+          "userAgent": "demo"
+        }
+      }
+    ],
+    "statistics": {
+      "totalVisitors": 1,
+      "totalMessages": 1,
+      "lastActivity": "2025-01-20T13:45:00Z"
+    }
+  }

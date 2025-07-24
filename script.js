@@ -419,16 +419,28 @@ function createMinimap() {
                 roomDiv.style.height = `${roomSize}px`;
                 roomDiv.id = `minimap-${coords}`;
                 
-                // Add room name label
+                // Add room name label - show first word or abbreviated name
                 const nameLabel = document.createElement('div');
                 nameLabel.style.position = 'absolute';
                 nameLabel.style.bottom = '2px';
                 nameLabel.style.left = '2px';
-                nameLabel.style.fontSize = '9px';
+                nameLabel.style.fontSize = '8px';
                 nameLabel.style.color = '#333';
                 nameLabel.style.fontWeight = 'bold';
                 nameLabel.style.textShadow = '1px 1px 1px rgba(255,255,255,0.8)';
-                nameLabel.textContent = rooms[coords].name.split(' ')[0];
+                
+                // Create abbreviated names for all rooms
+                const roomName = rooms[coords].name;
+                let displayName;
+                if (roomName.includes('Northwest')) displayName = 'NW';
+                else if (roomName.includes('Northeast')) displayName = 'NE'; 
+                else if (roomName.includes('Southwest')) displayName = 'SW';
+                else if (roomName.includes('Southeast')) displayName = 'SE';
+                else if (roomName.includes('West Wing')) displayName = 'West';
+                else if (roomName.includes('East Wing')) displayName = 'East';
+                else displayName = roomName.split(' ')[0]; // First word for others
+                
+                nameLabel.textContent = displayName;
                 roomDiv.appendChild(nameLabel);
                 
                 minimap.appendChild(roomDiv);
@@ -442,25 +454,32 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (!sessionActive) return;
         
-        keys[e.key.toLowerCase()] = true;
+        // Check if user is typing in the text input
+        const isTyping = document.activeElement === document.getElementById('textInput');
         
         // Handle text input
-        if (document.activeElement === document.getElementById('textInput')) {
+        if (isTyping) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 submitText();
             }
+            // Don't process movement keys while typing
             return;
         }
         
-        // Prevent default for movement keys
+        keys[e.key.toLowerCase()] = true;
+        
+        // Prevent default for movement keys only when not typing
         if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(e.key.toLowerCase())) {
             e.preventDefault();
         }
     });
     
     document.addEventListener('keyup', (e) => {
-        keys[e.key.toLowerCase()] = false;
+        // Only process keyup for movement when not typing
+        if (document.activeElement !== document.getElementById('textInput')) {
+            keys[e.key.toLowerCase()] = false;
+        }
     });
     
     // Text input listeners

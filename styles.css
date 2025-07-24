@@ -322,6 +322,18 @@ body {
     background: #f8f9fa;
     transition: all 0.3s ease;
     font-size: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 2px;
+}
+
+.minimap-room > div {
+    line-height: 1;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .minimap-room.current {

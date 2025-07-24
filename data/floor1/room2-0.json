@@ -1,0 +1,14 @@
+{
+    "roomId": "2-0",
+    "roomName": "Northeast Room",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [],
+    "statistics": {
+      "totalVisitors": 0,
+      "totalMessages": 0,
+      "lastActivity": null
+    }
+  }

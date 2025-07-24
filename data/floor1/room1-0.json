@@ -1,0 +1,32 @@
+{
+    "roomId": "1-0",
+    "roomName": "Elevator",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [
+      {
+        "id": "demo_entry_elevator_1",
+        "text": "Going up? Past floors archived here...",
+        "position": {
+          "x": 300,
+          "y": 200
+        },
+        "author": {
+          "id": "demo_visitor_1",
+          "color": "#FFFF00",
+          "timestamp": "2025-01-20T12:00:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash",
+          "userAgent": "demo"
+        }
+      }
+    ],
+    "statistics": {
+      "totalVisitors": 1,
+      "totalMessages": 1,
+      "lastActivity": "2025-01-20T12:00:00Z"
+    }
+  }

@@ -1,0 +1,32 @@
+{
+    "roomId": "1-2",
+    "roomName": "Foyer",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [
+      {
+        "id": "demo_entry_foyer_1",
+        "text": "Welcome, first visitor! Leave your mark...",
+        "position": {
+          "x": 150,
+          "y": 320
+        },
+        "author": {
+          "id": "demo_visitor_6",
+          "color": "#FF00FF",
+          "timestamp": "2025-01-20T09:15:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash_6",
+          "userAgent": "demo"
+        }
+      }
+    ],
+    "statistics": {
+      "totalVisitors": 1,
+      "totalMessages": 1,
+      "lastActivity": "2025-01-20T09:15:00Z"
+    }
+  }

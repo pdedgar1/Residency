@@ -1,0 +1,32 @@
+{
+    "roomId": "0-1",
+    "roomName": "West Wing",
+    "floorNumber": 1,
+    "sessionStart": "2025-01-20T00:00:00Z",
+    "sessionEnd": null,
+    "isLocked": false,
+    "textEntries": [
+      {
+        "id": "demo_entry_west_1",
+        "text": "Quiet contemplation space",
+        "position": {
+          "x": 250,
+          "y": 300
+        },
+        "author": {
+          "id": "demo_visitor_2",
+          "color": "#BAFFC9",
+          "timestamp": "2025-01-20T11:30:00Z"
+        },
+        "metadata": {
+          "ipHash": "demo_hash_2",
+          "userAgent": "demo"
+        }
+      }
+    ],
+    "statistics": {
+      "totalVisitors": 1,
+      "totalMessages": 1,
+      "lastActivity": "2025-01-20T11:30:00Z"
+    }
+  }
