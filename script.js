@@ -10,8 +10,8 @@ let currentFloor = 1;
 let visitorCount = 1;
 
 // Movement speed and grid
-const MOVE_SPEED = 8;
-const SPRITE_SIZE = 32;
+const MOVE_SPEED = 4;
+const SPRITE_SIZE = 12;
 
 // Room layout (3x3 grid)
 const rooms = {
@@ -197,141 +197,138 @@ function createRooms() {
 function createDoors(roomDiv, doors, roomType) {
     const doorStyle = {
         position: 'absolute',
-        background: '#8B4513',
-        border: '2px solid #654321',
-        borderRadius: '4px',
+        background: '#333',
+        border: '3px solid #666',
         zIndex: 20
-    };
-    
-    const windowStyle = {
-        position: 'absolute',
-        background: 'rgba(135, 206, 235, 0.6)',
-        border: '3px solid #4682B4',
-        borderRadius: '8px',
-        zIndex: 20,
-        boxShadow: 'inset 0 0 10px rgba(255, 255, 255, 0.3)'
     };
     
     if (doors.north) {
         const door = document.createElement('div');
         Object.assign(door.style, doorStyle);
-        door.style.top = '0px';
+        door.style.top = '20px';
         door.style.left = '350px';
         door.style.width = '100px';
-        door.style.height = '20px';
+        door.style.height = '8px';
         door.className = 'door north-door';
         roomDiv.appendChild(door);
         
-        // Add door label
+        // Add ASCII arrow
         const label = document.createElement('div');
-        label.textContent = '↑';
+        label.textContent = '▲';
         label.style.position = 'absolute';
-        label.style.top = '25px';
+        label.style.top = '35px';
         label.style.left = '375px';
-        label.style.color = '#333';
+        label.style.color = 'inherit';
         label.style.fontWeight = 'bold';
-        label.style.fontSize = '20px';
+        label.style.fontSize = '16px';
         label.style.zIndex = '25';
+        label.style.fontFamily = 'Courier New, monospace';
         roomDiv.appendChild(label);
     }
     
     if (doors.south) {
         const door = document.createElement('div');
         Object.assign(door.style, doorStyle);
-        door.style.bottom = '0px';
+        door.style.bottom = '20px';
         door.style.left = '350px';
         door.style.width = '100px';
-        door.style.height = '20px';
+        door.style.height = '8px';
         door.className = 'door south-door';
         roomDiv.appendChild(door);
         
         const label = document.createElement('div');
-        label.textContent = '↓';
+        label.textContent = '▼';
         label.style.position = 'absolute';
-        label.style.bottom = '25px';
+        label.style.bottom = '35px';
         label.style.left = '375px';
-        label.style.color = '#333';
+        label.style.color = 'inherit';
         label.style.fontWeight = 'bold';
-        label.style.fontSize = '20px';
+        label.style.fontSize = '16px';
         label.style.zIndex = '25';
+        label.style.fontFamily = 'Courier New, monospace';
         roomDiv.appendChild(label);
     }
     
     if (doors.west) {
         const door = document.createElement('div');
         Object.assign(door.style, doorStyle);
-        door.style.left = '0px';
+        door.style.left = '20px';
         door.style.top = '350px';
-        door.style.width = '20px';
+        door.style.width = '8px';
         door.style.height = '100px';
         door.className = 'door west-door';
         roomDiv.appendChild(door);
         
         const label = document.createElement('div');
-        label.textContent = '←';
+        label.textContent = '◄';
         label.style.position = 'absolute';
         label.style.top = '375px';
-        label.style.left = '25px';
-        label.style.color = '#333';
+        label.style.left = '35px';
+        label.style.color = 'inherit';
         label.style.fontWeight = 'bold';
-        label.style.fontSize = '20px';
+        label.style.fontSize = '16px';
         label.style.zIndex = '25';
+        label.style.fontFamily = 'Courier New, monospace';
         roomDiv.appendChild(label);
     }
     
     if (doors.east) {
         const door = document.createElement('div');
         Object.assign(door.style, doorStyle);
-        door.style.right = '0px';
+        door.style.right = '20px';
         door.style.top = '350px';
-        door.style.width = '20px';
+        door.style.width = '8px';
         door.style.height = '100px';
         door.className = 'door east-door';
         roomDiv.appendChild(door);
         
         const label = document.createElement('div');
-        label.textContent = '→';
+        label.textContent = '►';
         label.style.position = 'absolute';
         label.style.top = '375px';
-        label.style.right = '25px';
-        label.style.color = '#333';
+        label.style.right = '35px';
+        label.style.color = 'inherit';
         label.style.fontWeight = 'bold';
-        label.style.fontSize = '20px';
+        label.style.fontSize = '16px';
         label.style.zIndex = '25';
+        label.style.fontFamily = 'Courier New, monospace';
         roomDiv.appendChild(label);
     }
     
-    // Add decorative windows for rooms that don't have doors on certain sides
+    // Add terminal-style windows
     const allSides = ['north', 'south', 'east', 'west'];
     allSides.forEach(side => {
-        if (!doors[side] && Math.random() > 0.3) { // 70% chance of window
+        if (!doors[side] && Math.random() > 0.5) {
             const window = document.createElement('div');
-            Object.assign(window.style, windowStyle);
+            window.style.position = 'absolute';
+            window.style.background = '#222';
+            window.style.border = '2px solid #444';
+            window.style.zIndex = '15';
             
             switch(side) {
                 case 'north':
-                    window.style.top = '20px';
-                    window.style.left = `${200 + Math.random() * 200}px`;
-                    window.style.width = '80px';
-                    window.style.height = '60px';
+                    window.style.top = '25px';
+                    window.style.left = `${150 + Math.random() * 200}px`;
+                    window.style.width = '60px';
+                    window.style.height = '40px';
                     break;
                 case 'south':
-                    window.style.bottom = '20px';
-                    window.style.left = `${200 + Math.random() * 200}px`;
-                    window.style.width = '80px';
-                    window.style.height = '60px';
+                    window.style.bottom = '25px';
+                    window.style.left = `${150 + Math.random() * 200}px`;
+                    window.style.width = '60px';
+                    window.style.height = '40px';
                     break;
                 case 'west':
-                    window.style.left = '20px';
-                    window.style.top = `${200 + Math.random() * 200}px`;
-                    window.style.width = '60px';
-                    window.style.height = '80px';
+                    window.style.left = '25px';
+                    window.style.top = `${150 + Math.random() * 200}px`;
+                    window.style.width = '40px';
+                    window.style.height = '60px';
                     break;
                 case 'east':
-                    window.style.right = '20px';
-                    window.style.top = `${200 + Math.random() * 200}px`;
-                    window.style.width = '60px';
-                    window.style.height = '80px';
+                    window.style.right = '25px';
+                    window.style.top = `${150 + Math.random() * 200}px`;
+                    window.style.width = '40px';
+                    window.style.height = '60px';
                     break;
             }
             
@@ -416,8 +413,8 @@ function createMinimap() {
             if (rooms[coords]) {
                 const roomDiv = document.createElement('div');
                 roomDiv.className = `minimap-room ${rooms[coords].type}`;
-                roomDiv.style.left = `${x * (roomSize + gap) + 10}px`;
-                roomDiv.style.top = `${y * (roomSize + gap) + 10}px`;
+                roomDiv.style.left = `${x * (roomSize + gap) + 5}px`;
+                roomDiv.style.top = `${y * (roomSize + gap) + 5}px`;
                 roomDiv.style.width = `${roomSize}px`;
                 roomDiv.style.height = `${roomSize}px`;
                 roomDiv.id = `minimap-${coords}`;
@@ -427,9 +424,10 @@ function createMinimap() {
                 nameLabel.style.position = 'absolute';
                 nameLabel.style.bottom = '2px';
                 nameLabel.style.left = '2px';
-                nameLabel.style.fontSize = '8px';
+                nameLabel.style.fontSize = '9px';
                 nameLabel.style.color = '#333';
                 nameLabel.style.fontWeight = 'bold';
+                nameLabel.style.textShadow = '1px 1px 1px rgba(255,255,255,0.8)';
                 nameLabel.textContent = rooms[coords].name.split(' ')[0];
                 roomDiv.appendChild(nameLabel);
                 
@@ -530,56 +528,59 @@ function handleMovement() {
     }
     
     if (moved) {
-        // Check boundaries and room transitions
+        // Room boundaries (accounting for the room borders)
         const roomBounds = {
             left: 30,
             right: 770,
-            top: 50,
-            bottom: 750
+            top: 30,
+            bottom: 770
         };
         
         let roomChanged = false;
         let newRoom = { ...currentRoom };
         
-        // Check room transitions
-        if (newX < roomBounds.left && currentRoom.x > 0) {
+        // Check for room transitions at boundaries
+        if (newX <= roomBounds.left && currentRoom.x > 0) {
             const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
-            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.west) {
+            const targetRoomData = rooms[`${currentRoom.x - 1},${currentRoom.y}`];
+            if (currentRoomData?.doors?.west && targetRoomData) {
                 newRoom.x--;
-                newX = roomBounds.right - SPRITE_SIZE;
+                newX = roomBounds.right - SPRITE_SIZE - 10; // Position away from the edge
                 roomChanged = true;
             }
-        } else if (newX > roomBounds.right && currentRoom.x < 2) {
+        } else if (newX >= roomBounds.right - SPRITE_SIZE && currentRoom.x < 2) {
             const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
-            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.east) {
+            const targetRoomData = rooms[`${currentRoom.x + 1},${currentRoom.y}`];
+            if (currentRoomData?.doors?.east && targetRoomData) {
                 newRoom.x++;
-                newX = roomBounds.left;
+                newX = roomBounds.left + 10; // Position away from the edge
                 roomChanged = true;
             }
-        } else if (newY < roomBounds.top && currentRoom.y > 0) {
+        } else if (newY <= roomBounds.top && currentRoom.y > 0) {
             const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
-            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.north) {
+            const targetRoomData = rooms[`${currentRoom.x},${currentRoom.y - 1}`];
+            if (currentRoomData?.doors?.north && targetRoomData) {
                 newRoom.y--;
-                newY = roomBounds.bottom - SPRITE_SIZE;
+                newY = roomBounds.bottom - SPRITE_SIZE - 10; // Position away from the edge
                 roomChanged = true;
             }
-        } else if (newY > roomBounds.bottom && currentRoom.y < 2) {
+        } else if (newY >= roomBounds.bottom - SPRITE_SIZE && currentRoom.y < 2) {
             const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
-            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.south) {
+            const targetRoomData = rooms[`${currentRoom.x},${currentRoom.y + 1}`];
+            if (currentRoomData?.doors?.south && targetRoomData) {
                 newRoom.y++;
-                newY = roomBounds.top;
+                newY = roomBounds.top + 10; // Position away from the edge
                 roomChanged = true;
             }
         }
         
-        // Check if new room exists
-        const newRoomKey = `${newRoom.x},${newRoom.y}`;
-        if (roomChanged && rooms[newRoomKey]) {
+        // Apply room change or constrain movement
+        if (roomChanged) {
             currentRoom = newRoom;
             spritePosition.x = newX;
             spritePosition.y = newY;
             transitionToRoom();
-        } else if (!roomChanged) {
+        } else {
             // Keep sprite within current room bounds
             spritePosition.x = Math.max(roomBounds.left, Math.min(roomBounds.right - SPRITE_SIZE, newX));
             spritePosition.y = Math.max(roomBounds.top, Math.min(roomBounds.bottom - SPRITE_SIZE, newY));
@@ -592,9 +593,11 @@ function handleMovement() {
             if (sprite) {
                 sprite.classList.add('walking');
                 setTimeout(() => {
-                    sprite.classList.remove('walking');
+                    if (sprite) {
+                        sprite.classList.remove('walking');
+                    }
                     isWalking = false;
-                }, 150);
+                }, 100);
             }
         }
         
@@ -673,7 +676,7 @@ function submitText() {
         const textEntry = {
             text: text,
             x: spritePosition.x,
-            y: spritePosition.y - 40, // Above sprite
+            y: spritePosition.y - 25, // Above sprite (adjusted for smaller sprite)
             color: spriteColor,
             timestamp: Date.now(),
             author: `visitor_${Math.random().toString(36).substr(2, 9)}`
@@ -684,15 +687,15 @@ function submitText() {
         currentTyping = '';
         
         // Move sprite slightly after placing text
-        spritePosition.x += (Math.random() - 0.5) * 60;
-        spritePosition.y += (Math.random() - 0.5) * 60;
+        spritePosition.x += (Math.random() - 0.5) * 40;
+        spritePosition.y += (Math.random() - 0.5) * 40;
         
-        // Keep sprite in bounds
+        // Keep sprite in bounds (updated for new boundaries)
         const bounds = {
             left: 30,
             right: 770 - SPRITE_SIZE,
-            top: 50,
-            bottom: 750 - SPRITE_SIZE
+            top: 30,
+            bottom: 770 - SPRITE_SIZE
         };
         
         spritePosition.x = Math.max(bounds.left, Math.min(bounds.right, spritePosition.x));
@@ -747,7 +750,7 @@ function updateTypingPreview() {
         typingElement.className = 'current-typing';
         typingElement.textContent = currentTyping + '|';
         typingElement.style.left = `${spritePosition.x}px`;
-        typingElement.style.top = `${spritePosition.y - 40}px`;
+        typingElement.style.top = `${spritePosition.y - 25}px`; // Above sprite (adjusted)
         currentRoomElement.appendChild(typingElement);
     }
 }

@@ -121,33 +121,65 @@ body {
     top: 0;
     left: 0;
     display: none;
-    padding: 30px;
+    padding: 0;
     overflow: hidden;
-    background: #fdfdfd;
+    background: #0a0a0a;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    border: 6px solid #333;
 }
 
 .room.active {
     display: block;
 }
 
+.room::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 4px solid #666;
+    margin: 20px;
+    pointer-events: none;
+    z-index: 5;
+}
+
 .room.foyer {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #1a0a1a;
+    color: #ff00ff;
+}
+
+.room.foyer::before {
+    border-color: #ff00ff;
 }
 
 .room.elevator {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
+    background: #1a1a0a;
+    color: #ffff00;
+}
+
+.room.elevator::before {
+    border-color: #ffff00;
 }
 
 .room.courtyard {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
+    background: #0a1a1a;
+    color: #00ffff;
+}
+
+.room.courtyard::before {
+    border-color: #00ffff;
 }
 
 .room.garden {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    color: white;
+    background: #0a1a0a;
+    color: #00ff00;
+}
+
+.room.garden::before {
+    border-color: #00ff00;
 }
 
 /* Room Transition */
@@ -170,77 +202,89 @@ body {
 
 /* Sprite */
 .sprite {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 12px;
+    height: 16px;
+    border: none;
     position: absolute;
     z-index: 50;
-    border: 3px solid rgba(255, 255, 255, 0.9);
-    transition: all 0.15s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.1s ease;
+    animation: cursor-blink 1.2s infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.7; }
 }
 
 .sprite.walking {
-    animation: walk-bounce 0.15s ease-in-out;
-}
-
-@keyframes walk-bounce {
-    0%, 100% { transform: scale(1) translateY(0); }
-    50% { transform: scale(1.1) translateY(-2px); }
+    animation: none;
+    opacity: 1;
 }
 
 /* Text Elements */
 .room-text {
     position: absolute;
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.2;
     z-index: 40;
     word-wrap: break-word;
     max-width: 300px;
-    padding: 4px 8px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 2px 4px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid;
+    font-family: 'Courier New', monospace;
     font-weight: bold;
-    border-left: 4px solid;
 }
 
 .current-typing {
     position: absolute;
-    font-size: 14px;
-    color: #666;
+    font-size: 12px;
     z-index: 60;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: 2px dashed #999;
-    animation: typing-pulse 1s ease-in-out infinite;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 2px 4px;
+    border: 1px solid #666;
+    font-family: 'Courier New', monospace;
+    color: #aaa;
+    animation: typing-blink 0.8s ease-in-out infinite;
 }
 
-@keyframes typing-pulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+@keyframes typing-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
 }
 
 .room-label {
     position: absolute;
-    top: 10px;
-    left: 15px;
-    font-size: 16px;
+    top: 5px;
+    left: 5px;
+    font-size: 10px;
     font-weight: bold;
-    color: rgba(0, 0, 0, 0.7);
     z-index: 30;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 5px 10px;
-    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 6px;
+    border: 1px solid;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
 }
 
-.room.foyer .room-label,
-.room.elevator .room-label,
-.room.courtyard .room-label,
-.room.garden .room-label {
-    color: white;
-    background: rgba(0, 0, 0, 0.3);
+.room.foyer .room-label {
+    color: #ff00ff;
+    border-color: #ff00ff;
+}
+
+.room.elevator .room-label {
+    color: #ffff00;
+    border-color: #ffff00;
+}
+
+.room.courtyard .room-label {
+    color: #00ffff;
+    border-color: #00ffff;
+}
+
+.room .room-label {
+    color: #00ff00;
+    border-color: #00ff00;
 }
 
 /* Sidebar */
@@ -392,42 +436,80 @@ body {
 
 /* Door and Window Styles */
 .door {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     cursor: pointer;
+    background: #333 !important;
+    border: 3px solid #666 !important;
+    border-radius: 0 !important;
 }
 
 .door:hover {
-    background: #A0522D !important;
-    transform: scale(1.05);
+    background: #555 !important;
+    border-color: #888 !important;
+}
+
+.door::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: #aaa;
 }
 
 .window {
-    animation: window-shimmer 4s ease-in-out infinite;
+    background: #222 !important;
+    border: 3px solid #444 !important;
+    border-radius: 0 !important;
+    animation: none;
 }
 
-@keyframes window-shimmer {
-    0%, 100% { 
-        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
-    }
-    50% { 
-        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.6);
-    }
+.window::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    border: 1px solid #666;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        #444 2px,
+        #444 4px
+    );
 }
 
 /* Room specific door styling */
 .room.foyer .door {
-    background: #9b59b6;
-    border-color: #8e44ad;
+    background: #330033 !important;
+    border-color: #ff00ff !important;
+}
+
+.room.foyer .door::after {
+    background: #ff00ff;
 }
 
 .room.elevator .door {
-    background: #e74c3c;
-    border-color: #c0392b;
+    background: #333300 !important;
+    border-color: #ffff00 !important;
+}
+
+.room.elevator .door::after {
+    background: #ffff00;
 }
 
 .room.courtyard .door {
-    background: #3498db;
-    border-color: #2980b9;
+    background: #003333 !important;
+    border-color: #00ffff !important;
+}
+
+.room.courtyard .door::after {
+    background: #00ffff;
 }
 .session-locked {
     position: absolute;
