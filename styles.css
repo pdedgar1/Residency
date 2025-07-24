@@ -262,8 +262,8 @@ body {
 }
 
 .minimap {
-    width: 280px;
-    height: 280px;
+    width: 300px;
+    height: 300px;
     border: 2px solid #34495e;
     background: #ecf0f1;
     position: relative;
@@ -387,7 +387,45 @@ body {
     color: #5d6d7e;
 }
 
-/* Locked Session Overlay */
+/* Door and Window Styles */
+.door {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.door:hover {
+    background: #A0522D !important;
+    transform: scale(1.05);
+}
+
+.window {
+    animation: window-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes window-shimmer {
+    0%, 100% { 
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+    50% { 
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+}
+
+/* Room specific door styling */
+.room.foyer .door {
+    background: #9b59b6;
+    border-color: #8e44ad;
+}
+
+.room.elevator .door {
+    background: #e74c3c;
+    border-color: #c0392b;
+}
+
+.room.courtyard .door {
+    background: #3498db;
+    border-color: #2980b9;
+}
 .session-locked {
     position: absolute;
     top: 0;

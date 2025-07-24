@@ -1,5 +1,5 @@
 // Game state
-let currentRoom = { x: 1, y: 1 };
+let currentRoom = { x: 1, y: 2 }; // Start in foyer
 let spriteColor = '';
 let spritePosition = { x: 400, y: 400 };
 let currentTyping = '';
@@ -13,24 +13,17 @@ let visitorCount = 1;
 const MOVE_SPEED = 8;
 const SPRITE_SIZE = 32;
 
-// Room layout (4x4 grid with 2x2 courtyard in center)
+// Room layout (3x3 grid)
 const rooms = {
-    '0,0': { name: 'Northwest Corner', type: 'room' },
-    '1,0': { name: 'North Gallery', type: 'room' },
-    '2,0': { name: 'North Library', type: 'room' },
-    '3,0': { name: 'Northeast Tower', type: 'room' },
-    '0,1': { name: 'Foyer', type: 'foyer' },
-    '1,1': { name: 'West Courtyard', type: 'courtyard' },
-    '2,1': { name: 'East Courtyard', type: 'courtyard' },
-    '3,1': { name: 'East Wing', type: 'room' },
-    '0,2': { name: 'West Garden', type: 'garden' },
-    '1,2': { name: 'South Courtyard', type: 'courtyard' },
-    '2,2': { name: 'Central Garden', type: 'courtyard' },
-    '3,2': { name: 'Meditation Room', type: 'room' },
-    '0,3': { name: 'Southwest Study', type: 'room' },
-    '1,3': { name: 'South Hall', type: 'room' },
-    '2,3': { name: 'Art Studio', type: 'room' },
-    '3,3': { name: 'Elevator', type: 'elevator' }
+    '0,0': { name: 'Northwest Room', type: 'room', doors: { south: true, east: true } },
+    '1,0': { name: 'Elevator', type: 'elevator', doors: { south: true, west: true, east: true } },
+    '2,0': { name: 'Northeast Room', type: 'room', doors: { south: true, west: true } },
+    '0,1': { name: 'West Wing', type: 'room', doors: { north: true, south: true, east: true } },
+    '1,1': { name: 'Courtyard', type: 'courtyard', doors: { north: true, south: true, east: true, west: true } },
+    '2,1': { name: 'East Wing', type: 'room', doors: { north: true, south: true, west: true } },
+    '0,2': { name: 'Southwest Room', type: 'room', doors: { north: true, east: true } },
+    '1,2': { name: 'Foyer', type: 'foyer', doors: { north: true, west: true, east: true } },
+    '2,2': { name: 'Southeast Room', type: 'room', doors: { north: true, west: true } }
 };
 
 // Text storage for each room
@@ -189,17 +182,236 @@ function createRooms() {
         label.textContent = room.name;
         roomDiv.appendChild(label);
         
+        // Add doors and windows
+        createDoors(roomDiv, room.doors, room.type);
+        
+        // Add elevator controls if this is the elevator
+        if (room.type === 'elevator') {
+            createElevatorControls(roomDiv);
+        }
+        
         mainView.appendChild(roomDiv);
     });
 }
 
+function createDoors(roomDiv, doors, roomType) {
+    const doorStyle = {
+        position: 'absolute',
+        background: '#8B4513',
+        border: '2px solid #654321',
+        borderRadius: '4px',
+        zIndex: 20
+    };
+    
+    const windowStyle = {
+        position: 'absolute',
+        background: 'rgba(135, 206, 235, 0.6)',
+        border: '3px solid #4682B4',
+        borderRadius: '8px',
+        zIndex: 20,
+        boxShadow: 'inset 0 0 10px rgba(255, 255, 255, 0.3)'
+    };
+    
+    if (doors.north) {
+        const door = document.createElement('div');
+        Object.assign(door.style, doorStyle);
+        door.style.top = '0px';
+        door.style.left = '350px';
+        door.style.width = '100px';
+        door.style.height = '20px';
+        door.className = 'door north-door';
+        roomDiv.appendChild(door);
+        
+        // Add door label
+        const label = document.createElement('div');
+        label.textContent = '↑';
+        label.style.position = 'absolute';
+        label.style.top = '25px';
+        label.style.left = '375px';
+        label.style.color = '#333';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '20px';
+        label.style.zIndex = '25';
+        roomDiv.appendChild(label);
+    }
+    
+    if (doors.south) {
+        const door = document.createElement('div');
+        Object.assign(door.style, doorStyle);
+        door.style.bottom = '0px';
+        door.style.left = '350px';
+        door.style.width = '100px';
+        door.style.height = '20px';
+        door.className = 'door south-door';
+        roomDiv.appendChild(door);
+        
+        const label = document.createElement('div');
+        label.textContent = '↓';
+        label.style.position = 'absolute';
+        label.style.bottom = '25px';
+        label.style.left = '375px';
+        label.style.color = '#333';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '20px';
+        label.style.zIndex = '25';
+        roomDiv.appendChild(label);
+    }
+    
+    if (doors.west) {
+        const door = document.createElement('div');
+        Object.assign(door.style, doorStyle);
+        door.style.left = '0px';
+        door.style.top = '350px';
+        door.style.width = '20px';
+        door.style.height = '100px';
+        door.className = 'door west-door';
+        roomDiv.appendChild(door);
+        
+        const label = document.createElement('div');
+        label.textContent = '←';
+        label.style.position = 'absolute';
+        label.style.top = '375px';
+        label.style.left = '25px';
+        label.style.color = '#333';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '20px';
+        label.style.zIndex = '25';
+        roomDiv.appendChild(label);
+    }
+    
+    if (doors.east) {
+        const door = document.createElement('div');
+        Object.assign(door.style, doorStyle);
+        door.style.right = '0px';
+        door.style.top = '350px';
+        door.style.width = '20px';
+        door.style.height = '100px';
+        door.className = 'door east-door';
+        roomDiv.appendChild(door);
+        
+        const label = document.createElement('div');
+        label.textContent = '→';
+        label.style.position = 'absolute';
+        label.style.top = '375px';
+        label.style.right = '25px';
+        label.style.color = '#333';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '20px';
+        label.style.zIndex = '25';
+        roomDiv.appendChild(label);
+    }
+    
+    // Add decorative windows for rooms that don't have doors on certain sides
+    const allSides = ['north', 'south', 'east', 'west'];
+    allSides.forEach(side => {
+        if (!doors[side] && Math.random() > 0.3) { // 70% chance of window
+            const window = document.createElement('div');
+            Object.assign(window.style, windowStyle);
+            
+            switch(side) {
+                case 'north':
+                    window.style.top = '20px';
+                    window.style.left = `${200 + Math.random() * 200}px`;
+                    window.style.width = '80px';
+                    window.style.height = '60px';
+                    break;
+                case 'south':
+                    window.style.bottom = '20px';
+                    window.style.left = `${200 + Math.random() * 200}px`;
+                    window.style.width = '80px';
+                    window.style.height = '60px';
+                    break;
+                case 'west':
+                    window.style.left = '20px';
+                    window.style.top = `${200 + Math.random() * 200}px`;
+                    window.style.width = '60px';
+                    window.style.height = '80px';
+                    break;
+                case 'east':
+                    window.style.right = '20px';
+                    window.style.top = `${200 + Math.random() * 200}px`;
+                    window.style.width = '60px';
+                    window.style.height = '80px';
+                    break;
+            }
+            
+            window.className = 'window';
+            roomDiv.appendChild(window);
+        }
+    });
+}
+
+function createElevatorControls(roomDiv) {
+    const elevatorPanel = document.createElement('div');
+    elevatorPanel.style.position = 'absolute';
+    elevatorPanel.style.right = '50px';
+    elevatorPanel.style.top = '100px';
+    elevatorPanel.style.background = '#2c3e50';
+    elevatorPanel.style.border = '3px solid #34495e';
+    elevatorPanel.style.borderRadius = '10px';
+    elevatorPanel.style.padding = '20px';
+    elevatorPanel.style.color = 'white';
+    elevatorPanel.style.fontFamily = 'monospace';
+    elevatorPanel.style.zIndex = '30';
+    elevatorPanel.innerHTML = `
+        <div style="text-align: center; margin-bottom: 15px; font-weight: bold;">PAST FLOORS</div>
+        <div id="floorButtons"></div>
+        <div style="margin-top: 15px; font-size: 12px; text-align: center;">
+            Click to visit archived floors
+        </div>
+    `;
+    
+    updateFloorButtons(elevatorPanel);
+    roomDiv.appendChild(elevatorPanel);
+}
+
+function updateFloorButtons(elevatorPanel) {
+    const floorButtons = elevatorPanel.querySelector('#floorButtons');
+    floorButtons.innerHTML = '';
+    
+    // Add buttons for past floors (floors < currentFloor)
+    for (let floor = 1; floor < currentFloor; floor++) {
+        const button = document.createElement('button');
+        button.textContent = `Floor ${floor}`;
+        button.style.display = 'block';
+        button.style.width = '100%';
+        button.style.margin = '5px 0';
+        button.style.padding = '8px';
+        button.style.background = '#3498db';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.borderRadius = '4px';
+        button.style.cursor = 'pointer';
+        button.style.fontFamily = 'inherit';
+        
+        button.onclick = () => visitPastFloor(floor);
+        floorButtons.appendChild(button);
+    }
+    
+    if (currentFloor === 1) {
+        floorButtons.innerHTML = '<div style="text-align: center; color: #bdc3c7; font-size: 12px;">No past floors yet</div>';
+    }
+}
+
+function visitPastFloor(floorNumber) {
+    // Generate the filename for the past floor
+    const filename = `floor_${floorNumber}.html`;
+    
+    // In a real implementation, you would have pre-generated these files
+    // For demo purposes, we'll show an alert
+    alert(`Would open ${filename} - this would contain the preserved text from Floor ${floorNumber}`);
+    
+    // Real implementation would be:
+    // window.open(filename, '_blank');
+}
+
 function createMinimap() {
     const minimap = document.getElementById('minimap');
-    const roomSize = 65;
+    const roomSize = 85;
     const gap = 5;
 
-    for (let y = 0; y < 4; y++) {
-        for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
             const coords = `${x},${y}`;
             if (rooms[coords]) {
                 const roomDiv = document.createElement('div');
@@ -209,6 +421,18 @@ function createMinimap() {
                 roomDiv.style.width = `${roomSize}px`;
                 roomDiv.style.height = `${roomSize}px`;
                 roomDiv.id = `minimap-${coords}`;
+                
+                // Add room name label
+                const nameLabel = document.createElement('div');
+                nameLabel.style.position = 'absolute';
+                nameLabel.style.bottom = '2px';
+                nameLabel.style.left = '2px';
+                nameLabel.style.fontSize = '8px';
+                nameLabel.style.color = '#333';
+                nameLabel.style.fontWeight = 'bold';
+                nameLabel.textContent = rooms[coords].name.split(' ')[0];
+                roomDiv.appendChild(nameLabel);
+                
                 minimap.appendChild(roomDiv);
             }
         }
@@ -319,21 +543,33 @@ function handleMovement() {
         
         // Check room transitions
         if (newX < roomBounds.left && currentRoom.x > 0) {
-            newRoom.x--;
-            newX = roomBounds.right - SPRITE_SIZE;
-            roomChanged = true;
-        } else if (newX > roomBounds.right && currentRoom.x < 3) {
-            newRoom.x++;
-            newX = roomBounds.left;
-            roomChanged = true;
+            const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
+            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.west) {
+                newRoom.x--;
+                newX = roomBounds.right - SPRITE_SIZE;
+                roomChanged = true;
+            }
+        } else if (newX > roomBounds.right && currentRoom.x < 2) {
+            const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
+            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.east) {
+                newRoom.x++;
+                newX = roomBounds.left;
+                roomChanged = true;
+            }
         } else if (newY < roomBounds.top && currentRoom.y > 0) {
-            newRoom.y--;
-            newY = roomBounds.bottom - SPRITE_SIZE;
-            roomChanged = true;
-        } else if (newY > roomBounds.bottom && currentRoom.y < 3) {
-            newRoom.y++;
-            newY = roomBounds.top;
-            roomChanged = true;
+            const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
+            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.north) {
+                newRoom.y--;
+                newY = roomBounds.bottom - SPRITE_SIZE;
+                roomChanged = true;
+            }
+        } else if (newY > roomBounds.bottom && currentRoom.y < 2) {
+            const currentRoomData = rooms[`${currentRoom.x},${currentRoom.y}`];
+            if (currentRoomData && currentRoomData.doors && currentRoomData.doors.south) {
+                newRoom.y++;
+                newY = roomBounds.top;
+                roomChanged = true;
+            }
         }
         
         // Check if new room exists
@@ -530,11 +766,11 @@ function formatTimestamp(timestamp) {
 // Demo data for initial rooms (remove in production)
 function addDemoText() {
     const demoEntries = [
-        { room: '1,1', text: 'Welcome to the courtyard...', x: 200, y: 200, color: '#FFB3BA' },
-        { room: '0,1', text: 'First visitor here!', x: 150, y: 300, color: '#BAFFC9' },
-        { room: '3,3', text: 'The elevator awaits...', x: 400, y: 350, color: '#BAE1FF' },
-        { room: '1,2', text: 'Beautiful garden space', x: 300, y: 250, color: '#FFDFBA' },
-        { room: '2,1', text: 'Light streams through here', x: 250, y: 180, color: '#E6B3FF' }
+        { room: '1,1', text: 'Welcome to the central courtyard...', x: 200, y: 200, color: '#FFB3BA' },
+        { room: '1,2', text: 'First visitor here in the foyer!', x: 150, y: 300, color: '#BAFFC9' },
+        { room: '1,0', text: 'Elevator to past floors...', x: 400, y: 350, color: '#BAE1FF' },
+        { room: '0,1', text: 'Quiet contemplation space', x: 300, y: 250, color: '#FFDFBA' },
+        { room: '2,1', text: 'Light streams through the eastern windows', x: 250, y: 180, color: '#E6B3FF' }
     ];
     
     demoEntries.forEach(entry => {
