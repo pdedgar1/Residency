@@ -25,6 +25,10 @@ let roomUpdateInterval = null;
 const MOVE_SPEED = 4;
 const SPRITE_SIZE = 12;
 
+// API endpoints 
+const API_BASE = window.location.origin + '/.netlify/functions';
+
+
 // Room layout (3x3 grid)
 const rooms = {
     '0,0': { name: 'Northwest Room', type: 'room', doors: { south: true, east: true } },
@@ -60,21 +64,40 @@ const pastelColors = [
 // User setup functions
 async function loadAvailableColors() {
     try {
+        console.log('Loading colors from:', `${API_BASE}/get-available-colors`);
+        
+        const colorStatus = document.getElementById('colorStatus');
+        colorStatus.textContent = 'Loading colors...';
+        
         const response = await fetch(`${API_BASE}/get-available-colors`);
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
+        console.log('Color data received:', data);
         
         const colorGrid = document.getElementById('colorGrid');
-        const colorStatus = document.getElementById('colorStatus');
-        
         colorGrid.innerHTML = '';
         
-        data.availableColors.forEach(color => {
+        // Use all available colors if API call failed
+        const colorsToUse = data.availableColors || [
+            '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF',
+            '#E6B3FF', '#FFB3E6', '#FFD1DC', '#B3E5D1', '#D1B3FF',
+            '#E6CCB3', '#B3CCE6', '#FFE6B3', '#E6FFB3', '#B3FFE6',
+            '#FFC3A0', '#D4A5A5', '#A0E7E5', '#B4F8C8', '#F0E68C'
+        ];
+        
+        colorsToUse.forEach(color => {
             const colorDiv = document.createElement('div');
             colorDiv.className = 'color-option';
             colorDiv.style.backgroundColor = color;
             colorDiv.onclick = () => selectColor(color);
             
-            if (data.usedColors.includes(color)) {
+            if (data.usedColors && data.usedColors.includes(color)) {
                 colorDiv.classList.add('used');
                 colorDiv.onclick = null;
             }
@@ -82,12 +105,37 @@ async function loadAvailableColors() {
             colorGrid.appendChild(colorDiv);
         });
         
-        const availableCount = data.availableColors.length - data.usedColors.length;
-        colorStatus.textContent = `${availableCount} colors available • ${data.totalOnline} users online`;
+        if (data.success) {
+            const availableCount = (data.availableColors || []).length;
+            const usedCount = (data.usedColors || []).length;
+            colorStatus.textContent = `${availableCount} colors available • ${data.totalOnline || 0} users online`;
+        } else {
+            colorStatus.textContent = 'Using offline colors • Functions may not be deployed yet';
+        }
         
     } catch (error) {
         console.error('Error loading colors:', error);
-        document.getElementById('colorStatus').textContent = 'Error loading colors';
+        
+        // Fallback to default colors
+        const colorGrid = document.getElementById('colorGrid');
+        const fallbackColors = [
+            '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF',
+            '#E6B3FF', '#FFB3E6', '#FFD1DC', '#B3E5D1', '#D1B3FF',
+            '#E6CCB3', '#B3CCE6', '#FFE6B3', '#E6FFB3', '#B3FFE6'
+        ];
+        
+        colorGrid.innerHTML = '';
+        fallbackColors.forEach(color => {
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'color-option';
+            colorDiv.style.backgroundColor = color;
+            colorDiv.onclick = () => selectColor(color);
+            colorGrid.appendChild(colorDiv);
+        });
+        
+        const colorStatus = document.getElementById('colorStatus');
+        colorStatus.textContent = `Offline mode - All colors available • Error: ${error.message}`;
+        colorStatus.style.color = '#e74c3c';
     }
 }
 
@@ -141,20 +189,31 @@ async function enterRooms() {
     // Initialize game
     initGame();
     
-    // Start presence system
-    startPresenceSystem();
+    // Start presence system (with fallback)
+    try {
+        startPresenceSystem();
+    } catch (error) {
+        console.warn('Starting in offline mode:', error);
+        // Set default counts for offline mode
+        updateUserCounts(0, 1);
+    }
 }
 
 // Presence system
 function startPresenceSystem() {
-    // Send initial presence
-    updatePresence();
-    
-    // Send heartbeat every 30 seconds
-    presenceInterval = setInterval(updatePresence, 30000);
-    
-    // Update room data every 10 seconds
-    roomUpdateInterval = setInterval(updateRoomData, 10000);
+    // Only start if functions are available
+    if (API_BASE.includes('localhost') || API_BASE.includes('.netlify.app')) {
+        // Send initial presence
+        updatePresence();
+        
+        // Send heartbeat every 30 seconds
+        presenceInterval = setInterval(updatePresence, 30000);
+        
+        // Update room data every 10 seconds
+        roomUpdateInterval = setInterval(updateRoomData, 10000);
+    } else {
+        console.warn('Presence system disabled - not on Netlify');
+    }
     
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {
@@ -177,13 +236,20 @@ async function updatePresence() {
             })
         });
         
+        if (!response.ok) {
+            console.warn('Presence update failed:', response.status);
+            return;
+        }
+        
         const data = await response.json();
         if (data.success) {
             updateOtherUsers(data.users);
             updateUserCounts(data.roomCount, data.totalOnline);
         }
     } catch (error) {
-        console.error('Error updating presence:', error);
+        console.warn('Error updating presence (offline mode):', error.message);
+        // Gracefully handle offline mode
+        updateUserCounts(0, 1);
     }
 }
 
