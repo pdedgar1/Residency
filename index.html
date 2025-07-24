@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaborative Text Rooms</title>
+    <title>Writers Residency</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="user-setup" id="userSetup">
         <div class="setup-modal">
-            <h2>Enter the Text Rooms</h2>
+            <h2>Welcome to Writers Reseidency.</h2>
             <div class="setup-form">
                 <div class="username-section">
-                    <label for="usernameInput">Choose a username:</label>
+                    <label for="usernameInput">How should the other writers know you?</label>
                     <input type="text" id="usernameInput" maxlength="20" placeholder="Your name here...">
                 </div>
                 
                 <div class="color-section">
-                    <label>Choose your sprite color:</label>
+                    <label>Choose your pen color:</label>
                     <div class="color-grid" id="colorGrid">
                         <!-- Colors will be populated here -->
                     </div>
@@ -25,7 +25,7 @@
                 </div>
                 
                 <div class="setup-controls">
-                    <button id="enterRoomsBtn" onclick="enterRooms()" disabled>Enter Rooms</button>
+                    <button id="enterRoomsBtn" onclick="enterRooms()" disabled>Enter the Residency House</button>
                 </div>
             </div>
         </div>
@@ -51,13 +51,13 @@
             <div class="input-area">
                 <textarea class="text-input" id="textInput" placeholder="Type your message here... Press Enter to place it in the room" maxlength="200"></textarea>
                 <div class="input-controls">
-                    <button class="submit-btn" onclick="submitText()">Place Text</button>
+                    <button class="submit-btn" onclick="submitText()">Draft in this room</button>
                     <span class="char-counter" id="charCounter">0/200</span>
                 </div>
             </div>
 
             <div class="info">
-                <strong>Collaborative Text Rooms</strong><br>
+                <strong>Writers Residency</strong><br>
                 You are <span id="currentUsername">loading...</span><br>
                 <span id="spriteColor">colored</span> sprite.<br><br>
                 <strong>Controls:</strong><br>
