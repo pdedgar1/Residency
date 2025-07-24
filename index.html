@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Text Rooms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="session-init" id="sessionInit">
+        <div class="init-modal">
+            <h2>Welcome to the Text Rooms</h2>
+            <p>You are the first visitor to this session. Please set how long this floor should remain active:</p>
+            <div class="duration-options">
+                <button onclick="initSession(1)">1 Day</button>
+                <button onclick="initSession(3)">3 Days</button>
+                <button onclick="initSession(7)">1 Week</button>
+                <button onclick="initSession(30)">1 Month</button>
+            </div>
+            <div class="custom-duration">
+                <input type="number" id="customDays" min="1" max="365" placeholder="Custom days">
+                <button onclick="initCustomSession()">Set Custom</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer" style="display: none;">
+        <div class="main-view" id="mainView">
+            <!-- Rooms will be generated here -->
+            <div class="room-transition" id="roomTransition"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="minimap-container">
+                <div class="minimap" id="minimap">
+                    <!-- Minimap will be generated here -->
+                </div>
+                <div class="session-info">
+                    <div class="session-timer" id="sessionTimer"></div>
+                    <div class="floor-number">Floor <span id="floorNumber">1</span></div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea class="text-input" id="textInput" placeholder="Type your message here... Press Enter to place it in the room" maxlength="200"></textarea>
+                <div class="input-controls">
+                    <button class="submit-btn" onclick="submitText()">Place Text</button>
+                    <span class="char-counter" id="charCounter">0/200</span>
+                </div>
+            </div>
+
+            <div class="info">
+                <strong>Collaborative Text Rooms</strong><br>
+                You are the <span id="spriteColor">colored</span> sprite.<br><br>
+                <strong>Controls:</strong><br>
+                Arrow Keys or WASD to walk<br>
+                Enter to place text<br><br>
+                Current Room: <span id="currentRoomName">Foyer</span><br>
+                Visitors in session: <span id="visitorCount">1</span>
+            </div>
+
+            <div class="instructions">
+                <h4>Instructions:</h4>
+                <p>Walk through the rooms and leave your textual mark. Your words will appear above your sprite and remain for others to discover.</p>
+                <p>This floor will lock when the timer expires, preserving all messages as a time capsule.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
